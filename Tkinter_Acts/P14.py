@@ -6,7 +6,6 @@
 
 # NOTE: Fecha de Realización: 16/10/2025
 # NOTE: Alumno: Magallanes López Carlos Gabriel
-# NOTE: No. de Control: 24308051280865
 # NOTE: Escuela: Centro de Bachillerato Tecnológico Industrial y de Servicios No. 128
 # NOTE: Grupo: 3° "J"
 
