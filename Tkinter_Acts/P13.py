@@ -1,8 +1,9 @@
+
 # -----------------------------------------------------------------------------------------------------------------------------------------
 
 # DOCUMENTACIÓN:
 
-''' Práctica 13: Memorama 3 x 4 con Imágenes (Tkinter)'''
+''' Práctica 13: Semáforo con Interfaz Gráfica'''
 
 # NOTE: Fecha de Realización: 15/10/2025
 # NOTE: Alumno: Magallanes López Carlos Gabriel
@@ -12,86 +13,135 @@
 # -----------------------------------------------------------------------------------------------------------------------------------------
 """ ======================================================== Módulos Importados ============================================================= """
 
-import tkinter as tk                # Framework Básica para Interfaz Gráfica
-from tkinter import ttk             # Módulo para Widgets con Estilo Mejorado
+import tkinter as tk                # Framework Básico para Interfaz Gráfica
 
 # ------------------------------------------------------------------------------------------------------------------------------------------
-""" =========================================================== Práctica 13 ================================================================ """
+""" =========================================================== Helpers ================================================================ """
+
+# Función Helper: Actualizar Timer
+def update_timer() -> None:
+
+    """
+       - Función: Actualizar Timer
+       - Argumentos: Ninguno
+       - Retorno: Ninguno
+       - Objetivo: Actualizar el timer que muestra el tiempo restante para el próximo cambio de luz.
+    """
+
+    # Decrementar el Tiempo Restante
+    remaining_time[0] -= 1                                                    # Decrementar el Tiempo Restante en 1 Segundo 
+    label_timer.config(text = f"Tiempo restante: {remaining_time[0] + 1}s")   # Actualizar el Texto del Label del Timer
+    
+    # Si el Tiempo Restante es Mayor a 0, Llamar a esta Función Nuevamente después de 1 Segundo (1000 ms)
+    if remaining_time[0] > 0: window.after(1000, update_timer)  
+
+
+
+# Fución Helper: Cambiar Luz del Semáforo
+def change_light() -> None:
+
+    """
+       - Función: Cambiar Luz del Semáforo
+       - Argumentos: Ninguno
+       - Retorno: Ninguno
+       - Objetivo: Cambiar la luz del semáforo y actualizar el estado actual.
+    """
+    
+    # Declaración de Variable Global para el Estado Actual
+    global actual_state
+    
+    # Resetear Colores de las Luces
+    canvas.itemconfig(red_light, fill = "#555555")         # Luz Roja Apagada
+    canvas.itemconfig(yellow_light, fill = "#555555")      # Luz Amarilla Apagada
+    canvas.itemconfig(green_light, fill = "#555555")       # Luz Verde Apagada
+    
+    # Cambiar Luz Basado en el Estado Actual
+    if actual_state == 0:                                           # Si el Estado Actual es 0 (Rojo)
+        canvas.itemconfig(red_light, fill = "#e74c3c")            # Luz Roja Encendida
+        state_label.config(text = "ALTO", fg = "#e74c3c")         # Actualizar el Label de Estado
+        actual_state = 1                                            # Cambiar el Estado Actual a 1 (Amarillo)
+    elif actual_state == 1:                                         # Si el Estado Actual es 1 (Amarillo)
+        canvas.itemconfig(yellow_light, fill = "#f39c12")         # Luz Amarilla Encendida
+        state_label.config(text = "PRECAUCIÓN", fg = "#f39c12")   # Actualizar el Label de Estado
+        actual_state = 2                                            # Cambiar el Estado Actual a 2 (Verde)
+    else:                                                           # Si el Estado Actual es 2 (Verde)
+        canvas.itemconfig(green_light, fill = "#2ecc71")          # Luz Verde Encendida
+        state_label.config(text = "SIGA", fg = "#2ecc71")         # Actualizar el Label de Estado
+        actual_state = 0                                            # Cambiar el Estado Actual a 0 (Rojo)
+
+    # Reiniciar timer
+    remaining_time[0] = 5   # Reiniciar el Tiempo Restante a 5 segundos
+    update_timer()          # Iniciar el Timer
+
+    # Programar el Próximo Cambio de Luz después de 5 segundos (5000 ms)
+    window.after(5000, change_light)
+    
+
+# ------------------------------------------------------------------------------------------------------------------------------------------
+""" =========================================================== Práctica 12 ================================================================ """
 
 # Configuración de la Ventana
-window = tk.Tk()                               # Inicialización de la Ventana Raíz 
-window.title("Cuadrícula de Imágenes 3x4")     # Título de la Ventana
-window.geometry("520x380")                     # Tamaño de la Ventana
-window.config(bg = "#ecf0f1")                # Color de Fondo           
+window = tk.Tk()                                                     # Creación de la Ventana Principal
+window.geometry("600x400")                                           # Dimensiones de la Ventana
+window.title("Actividad 13 - Semáforo")                              # Título de la Ventana
+window.configure(bg="#2c3e50")                                     # Color de Fondo de la Ventana
 
 
-# Título
-title = ttk.Label(
+# Label de Título
+tk.Label(master = window, text = "SEMÁFORO", font = ("Arial", 20, "bold"), bg = "#2c3e50", fg = "white").pack(pady=20)
+
+
+# Creación del Semáforo
+canvas = tk.Canvas(master = window, width = 120, height = 280, bg = "#34495e", highlightthickness = 0)        # Lienzo para el Semáforo
+canvas.pack(pady = 20)                                                                                          # Empaquetado del Lienzo
+
+# Creación de Colores para el Semáforo
+red_light = canvas.create_oval(                # Luz Roja
     
-    window,                                    # Ventana
-    text = "Memorama con 12 Cartas",           # Texto 
-    font = ("Arial", 11, "bold"),              # (Fuente, Tamaño, Ancho Letra)
-    background = "#ecf0f1",                  # Color Fondo (Gris Claro)
-    foreground = "#30455b"                   # Color Fuente (Azul Oscuro)
+    20, 20,                                    # Coordenadas de Inicio del Óvalo
+    100, 100,                                  # Coordenadas de Término del Óvalo
+    fill = "#555555",                        # Color de Relleno
+    outline = "#000000",                     # Color de Contorno del Óvalo
+    width = 2                                  # Ancho del Contorno      
     
 )
-title.pack(pady = 5)                           # Agregamos Widget a la Ventana
+yellow_light = canvas.create_oval(             # Luz Amarilla
+    
+    20, 110,                                   # Coordenadas de Inicio del Óvalo
+    100, 190,                                   # Coordenadas de Término del Óvalo
+    fill="#555555",                          # Color de Relleno
+    outline="#000000",                       # Contorno del Óvalo
+    width=2                                    # Ancho del Contorno
+
+)
+green_light = canvas.create_oval(              # Luz Verde
+
+    20, 200,                                   # Coordenadas de Inicio del Óvalo
+    100, 280,                                  # Coordenadas de Término del Óvalo
+    fill="#555555",                          # Color de Relleno
+    outline="#000000",                       # Contorno del Óvalo
+    width=2                                    # Ancho del Contorno
+
+)
 
 
-# Frame Principal
-main_frame = tk.Frame(window, bg = "#ecf0f1")      # Color (Gris Claro)
-main_frame.pack(pady = 2)                            # Agregamos Widget a la Ventana
+# Label Estado del Semáforo (ALTO, PRECAUCIÓN, SIGA)
+state_label = tk.Label(master = window, text = "ALTO", font = ("Arial", 16, "bold"), bg = "#2c3e50", fg ="#e74c3c")   # Creación
+state_label.pack(pady = 10)                                                                                               # Empaquetado
 
 
-# Nombres de las Imágenes (Duplicadas para el Memorama)
-images = [f"imgs\\img{num}.png" for num in range(1, 7)] * 2  
+# Label para el Timer
+label_timer = tk.Label(master = window, text = "Tiempo restante: 5s", font = ("Arial", 12), bg = "#2c3e50", fg = "#ecf0f1")   # Creación
+label_timer.pack(pady = 5)                                                                                                         # Empaquetado
 
+# Variables de Control
+actual_state = 0           # Estado del Semáforo (Rojo = 0, Amarillo = 1, Verde = 2) 
+remaining_time = [5]       # Tiempo Restante para el Cambio de Luz (en segundos)
 
-# Cuadros del Memorama
-index = 0                                      # Índice para Imagen
-for row in range(3):                           # Recorrido de 3 Filas                             
-    for column in range(4):                    # Recorrido de 4 Columnas        
-        
-        
-        # Carta
-        card = tk.Frame(                       # Frame para la Carta
-            
-            main_frame,                        # Frame Principal
-            bg = "#34495e",                  # Color de Fondo (Azul Oscuro)
-            width = 100,                       # Ancho
-            height = 90,                       # Alto
-            relief = "solid",                  # Relieve Sólido
-            borderwidth = 1                    # Ancho del Borde
+# Iniciar el Cambio de Luz del Semáforo
+change_light()
 
-        )
-        card.grid(                             # Configuración Carta
-            
-            row = row, column = column,        # Posición Carta (Fila, olumna)
-            padx = 3, pady = 3,                # Espacio Relleno Alrededor
-            
-        )
-        
-
-        # Bloque de Validación para Carga de Imagen
-        try:
-            
-            # Imagen
-            original_image = tk.PhotoImage(file = images[index])                    # Carga de Imagen       
-            image = original_image.subsample(6, 6)                                  # Reducción de Tamaño (1/5)
-            image_label = ttk.Label(card, image = image, background = "#34495e")  # Etiqueta para Imagen
-            image_label.image = image                                               # Referencia para Evitar Recolección de Basura
-            image_label.pack(pady = 1)                                              # Agregamos Widget
-            
-        # Captura de Errores
-        except (tk.TclError, Exception, FileNotFoundError) as exc:                    # Erorres Posibles 
-            raise SystemExit(f"Error: No se pudo cargar la imagen. Detalles: {exc}")  # Salida del Programa
-
-
-        # Actualización del Contador
-        index += 1
-
-
-# Bucle Principal de Ventana
+# Bucle Principal de la Ventana
 window.mainloop()
 
 # -----------------------------------------------------------------------------------------------------------------------------------------
