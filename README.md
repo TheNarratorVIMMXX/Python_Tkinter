@@ -124,4 +124,12 @@ If you're a student and want to add more practices or improve existing ones, con
 
 ---
 
+# 📧 Contact
+
+- **Author:** Carlos Gabriel Magallanes López
+- **Email:** cgmagallanes23@gmail.com
+- **School:** CBTis No. 128
+
+---
+
 **⭐ If this repository was helpful, don't forget to give it a star on GitHub!**
